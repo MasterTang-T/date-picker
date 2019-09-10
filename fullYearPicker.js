@@ -1,17 +1,4 @@
-﻿// require.config({
-//     baseUrl: "/static/javascripts",
-//     shim: {
-//         "lib/data/noData": {
-//             deps: ["lib/jquery"]
-//         }
-//     }
-// });
-// define(["lib/jquery"],
-
-// )
-
-(function ($, window) {
-    window.$1 = $;
+﻿(function ($, window) {
     //记录当前选中的日期
     var fullYearPicker_nowSelect = null;
     var fullYearPicker_last = null;
@@ -348,52 +335,5 @@
             }
         }
     }
-
-    //监听键盘上下左右  fullYearPicker_nowSelect
-
-    // document.onkeydown = function (event) {
-    //     if (_viewer_.data('config').disabledDay !== "") {
-    //         return;
-    //     }
-    //     if (fullYearPicker_nowSelect === null) {
-    //         return
-    //     };
-    //     var e = event || window.event || arguments.callee.caller.arguments[0];
-    //     if (e && e.keyCode === 38 || e && e.keyCode === 37) { //上,左
-    //         //38=上键，37=左键
-    //         //alert(fullYearPicker_nowSelect)
-    //         //if(!e.ctrlKey){
-    //         if (e.keyCode === 38) { //up
-    //             selectDay(38, true);
-    //         } else if (e && e.keyCode === 37) {
-    //             selectDay(37, true);
-    //         }
-    //         // }else{
-    //         //     //组合键
-    //         //     if (e.keyCode === 38 && e.ctrlKey) {//up
-    //         //         selectDay(38,true);
-    //         //     } else if (e && e.keyCode === 37 && e.ctrlKey) {
-    //         //         selectDay(37,true);
-    //         //     }
-    //         // }
-    //     }
-    //     if (e && e.keyCode === 40 || e && e.keyCode === 39) { //下,右
-    //         //40=下键，39=右键
-    //         //if(!e.ctrlKey){
-    //         if (e.keyCode === 40) { //up
-    //             selectDay(40, true);
-    //         } else if (e && e.keyCode === 39) {
-    //             selectDay(39, true);
-    //         }
-    //         // }else{
-    //         //     //组合键
-    //         //     if (e.keyCode === 40 && e.ctrlKey) {//up
-    //         //         selectDay(40,true);
-    //         //     } else if (e && e.keyCode === 39 && e.ctrlKey) {
-    //         //         selectDay(39,true);
-    //         //     }
-    //         // }
-    //     }
-    // };
 
 })($, window);

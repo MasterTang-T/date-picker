@@ -3,7 +3,7 @@
 ## 初始化插件
 
 ```
-    $1(selector).fullYearPicker({
+    $(selector).fullYearPicker({
         disable:false,//只读
         year:"2019",//指定年份
         initDate:[],//初始化选中日期
@@ -17,7 +17,6 @@
             console.log(dateArr)
         }
     })
-    //ps: 是$1 不是$ !!!
 ```
 ## 修改周末状态
 ```
