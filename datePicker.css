@@ -1,0 +1,118 @@
+div.fullYearPicker {
+    height: 100%;
+    width: 100%
+}
+
+div.fullYearPicker div.year {
+    /* display: none; */
+    text-align: center;
+    margin-bottom:15px;
+}
+
+div.fullYearPicker div.year a {
+    color: #3d6af9;
+    width: 34px;
+    height: 34px;
+    border-width: 1px;
+    border-color: #e0e4e7;
+    border-style: solid;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 16px
+}
+
+div.fullYearPicker div.year a .next {
+    margin-right: 0
+}
+
+div.fullYearPicker div.year a:hover {
+    color: white;
+    background: #3d6af9
+}
+
+div.fullYearPicker div.year .yearText {
+    font-size: 18px;
+    color: #2e2f2f;
+    font-weight: bold;
+    margin: 0 20px
+}
+
+div.fullYearPicker .picker {
+    height: 88%
+}
+
+div.fullYearPicker .picker table {
+    font-size: 16px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    border: solid 1px #b5b5b5;
+    float: left;
+    margin-right: 25px;
+    margin-bottom: 1vh;
+    height: 22vh;
+    width: 18vw
+}
+
+div.fullYearPicker .picker table .right {
+    margin-right: 0
+}
+
+div.fullYearPicker .picker table tr th {
+    color: #2e2f2f;
+    text-align: center
+}
+
+div.fullYearPicker .picker table tr th.head {
+    cursor: default;
+    background: #e0e4e7;
+    color: #2e2f2f;
+    font-weight: bold
+}
+
+div.fullYearPicker .picker table tr td {
+    text-align: center;
+    cursor: pointer
+}
+
+div.fullYearPicker .picker table tr td div {
+    background: #d8e1fe;
+    color: #656464;
+    margin: 5px 0
+}
+
+div.fullYearPicker .picker table tr td.weekend div {
+    color: #656464;
+    margin: 5px 0
+}
+
+div.fullYearPicker .picker table tr td.empty div {
+    background: #fff !important;
+    margin: 5px 0
+}
+
+div.fullYearPicker .picker table tr td.selected div {
+    background: #3d6af9 !important;
+    color: #ffffff !important;
+    margin: 5px 0
+}
+
+div.fullYearPicker .picker table tr:last-child td div {
+    margin: 0
+}
+
+div.fullYearPicker table td.disabled {
+    color: #2b2929;
+    cursor: not-allowed
+}
+
+div.fullYearPicker table td.empty {
+    cursor: default
+}
+
+div.fullYearPicker br {
+    clear: both
+}
