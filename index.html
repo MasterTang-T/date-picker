@@ -2,11 +2,11 @@
 <html lang="en">
 
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>Date Demo</title>
-        <link href="./datePicker.css" type="text/css" rel="stylesheet">
+        <link href="./datePicker.css" type="text/css" rel="stylesheet" />
         <script src="./jquery.js"></script>
         <script src="./fullYearPicker.js"></script>
     </head>
@@ -15,29 +15,45 @@
         <input type="radio" name="datePicker" value="1" /> 周末休息
         <input type="radio" name="datePicker" value="2" /> 周日休息
         <input type="radio" name="datePicker" value="3" /> 取消周末休息
+        <input type="checkbox" id="box" /> 开启连续选中模式
         <button onclick="setHolidays(1)">设置节假日</button>
         <button onclick="setHolidays(2)">设置工作日</button>
+        <button onclick="renderTimeSlot()">
+            设置时间段
+        </button>
         <div id="datePicker"></div>
     </body>
     <script>
-        $('#datePicker').fullYearPicker({
+        let isContinuousSelected = false;
+        $("#datePicker").fullYearPicker({
             disable: false, //只读
-            year: '2019', //指定年份
+            year: "2019", //指定年份
             initDate: [], //初始化选中日期
             yearScale: {
                 min: 1949,
                 max: 2100
             }, //初始化日历范围
             format: "YYYY-MM-DD", //日期格式化  YYYY-MM-DD  YYYY-M-D
-            cellClick: function (dateStr, isDisabled) { //当前选中日期回调函数
+            cellClick: function (dateStr, isDisabled) {
+                //当前选中日期回调函数
             },
-            choose: function (dateArr) { //实时获取所有选中的日期的回调函数
-                window.dateArr = dateArr;
+            choose: function (dateArr) {
+                //实时获取所有选中的日期的回调函数
+                // console.log(dateArr, "dateArr");
+            },
+            getStartToEndDate: function (obj) {
+                console.log(obj, "obj");
             }
-        })
-        $('input[name=datePicker]').on('change', function(){
-            let val = Number($('input[name=datePicker]:checked').val());
-            console.log(val)
+        });
+        $("#box").on("click", function () {
+            $("#box").is(":checked") ?
+                (isContinuousSelected = true) :
+                (isContinuousSelected = false);
+            $("#datePicker").changeContinuousSelected(isContinuousSelected);
+        });
+        $("input[name=datePicker]").on("change", function () {
+            let val = Number($("input[name=datePicker]:checked").val());
+            console.log(val);
             switch (val) {
                 case 1:
                     setWeekendWork("#fcd7d8");
@@ -51,16 +67,26 @@
                 default:
                     break;
             }
-        })
-        function setHolidays(type){
-            switch(type){
+        });
+
+        function setHolidays(type) {
+            switch (type) {
                 case 1:
-                setColor4Date(window.dateArr, ['#d8e1fe']);
-                break;
+                    setColor4Date(window.dateArr, ["#d8e1fe"]);
+                    break;
                 case 2:
-                setColor4Date(window.dateArr, ['#fcd7d8']);
-                break;
+                    setColor4Date(window.dateArr, ["#fcd7d8"]);
+                    break;
             }
+        }
+
+        function renderTimeSlot() {
+            let arr = [{
+                bgColor: "#fcd7d8",
+                startDate: "2019-09-09",
+                endDate: "2019-09-20"
+            }];
+            window.renderColor4TimeSlot(arr);
         }
     </script>
 

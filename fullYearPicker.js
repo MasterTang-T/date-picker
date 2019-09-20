@@ -3,7 +3,14 @@
     var fullYearPicker_nowSelect = null;
     var fullYearPicker_last = null;
     var _viewer_ = this;
-
+    var isContinuousSelected = false; //连续性选中开关
+    selectedCount = 0; //连续选中计数器
+    twoEleArr = []; //只存开始结束时间数组
+    startToEndDateObj = {
+        startDate:'',
+        endDate:'',
+        selectedArr:[]
+    };
     function tdClass(i, disabledDay, sameMonth, values, dateStr) {
         // var cls = i == 0 || i == 6 ? 'weekend' : '';
         var cls = '';
@@ -20,10 +27,10 @@
     }
 
     function renderMonth(year, month, clear, disabledDay, values) {
-        var chnNumChar = ["一", "二", "三", "四", "五", "六", "七", "八", "九","十","十一","十二"];
+        var chnNumChar = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
         var d = new Date(year, month - 1, 1),
             s = '<table cellpadding="3" cellspacing="1" border="0"' + (clear ? ' class="right"' : '') + '>' +
-            '<tr><th colspan="7" class="head">' + chnNumChar[month-1] + '月</th></tr>' +
+            '<tr><th colspan="7" class="head">' + chnNumChar[month - 1] + '月</th></tr>' +
             '<tr><th class="weekend sunday">日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th class="weekend saturday">六</th></tr>';
         var dMonth = month - 1;
         var firstDay = d.getDay(),
@@ -66,6 +73,13 @@
                 $(this).addClass("arrow_box");
                 fullYearPicker_nowSelect = getDateStr(this);
                 _viewer_.data('config').choose(_viewer_.fullYearPicker('getSelected'));
+                setTimeSlot(fullYearPicker_nowSelect);
+                _viewer_.data('config').getStartToEndDate(startToEndDateObj);
+                startToEndDateObj={
+                    startDate:'',
+                    endDate:'',
+                    selectedArr:[]
+                }
                 // if(!$("[date='"+getDateStr(this)+"']").hasClass("selected")){
                 //     fullYearPicker_nowSelect = null;
                 //     //$(this).removeClass("arrow_box");
@@ -76,12 +90,60 @@
             }
         });
     }
+    //改变连续选中模式状态
+    $.fn.changeContinuousSelected = function (state = false) {
+        isContinuousSelected = state;
+    }
+    //获取开始结束时间，将时间段渲染出来
+    function setTimeSlot(selectStr) {
+        if (isContinuousSelected) {
+            selectedCount = selectedCount + 1;
+            twoEleArr.push(selectStr);
+            twoEleArr = Array.from(new Set(twoEleArr));
+            if (selectedCount % 2 == 0) {
+                let startDate = twoEleArr[twoEleArr.length - 2]
+                let endDate = twoEleArr[twoEleArr.length - 1]
+                let between_arr = getBetweenDateStr(startDate, endDate);
+                between_arr.forEach(function (item) {
+                    $("[date='" + item + "']").addClass("selected");
+                });
+                getStartToEndDate(startDate, endDate,between_arr);
+            }
+        }
 
+    }
+    // 获取开始结束日期
+    function getStartToEndDate (startDate, endDate,selectedArr) {
+
+        startToEndDateObj =  {
+            startDate,
+            endDate,
+            selectedArr
+        }
+    }
     //批量选中日期
     $.fn.selectDates = function (dateArray) {
         dateArray.forEach(function (item) {
             $("[date='" + item + "']").addClass("selected");
         });
+    }
+    //根据时间段渲染颜色
+    // dataArr = [{bgColor:red,startDate:'2019-09-09',endDate:'2019-09-20}]
+    window.renderColor4TimeSlot = function(dateArr){
+        dateArr.forEach(function (ele, index) { 
+            let arr = getBetweenDateStr(ele.startDate,ele.endDate);
+            arr.forEach((item, index) => {
+                $("body .fullYearPicker .picker table tr td").each(function (i, dom) {
+                    if ($(dom).attr('date') == item) {
+                        $(dom).find('div').css({
+                            "background-color": `${ele.bgColor}`
+                        });
+                        $(dom).removeClass('selected');
+                    }
+                })
+            });
+         })
+       
     }
     //改变周末的状态(颜色)
     // color 是需要改变的颜色
@@ -222,10 +284,11 @@
                 choose: config.choose,
                 initDate: config.initDate,
                 format: config.format,
-                disable: config.disable
+                disable: config.disable,
+                getStartToEndDate:config.getStartToEndDate
             };
             me.data('config', newConifg);
-            console.log(newConifg)
+            // console.log(newConifg)
             var selYear = '';
             // if (newConifg.yearScale) {
             //     selYear = '<select>';
@@ -251,7 +314,6 @@
                 _viewer_.data('config').disabledDay = '0,1,2,3,4,5,6';
             }
             renderYear(year, me, newConifg.disabledDay, newConifg.value);
-
             if (newConifg.initDate.length > 0) {
                 newConifg.initDate.forEach(function (p1, p2, p3) {
                     if (newConifg.format === 'YYYY-MM-DD') {
@@ -276,7 +338,45 @@
         var thisDate = new Date(year, month, 0); //当天数为0 js自动处理为上一月的最后一天
         return thisDate.getDate();
     }
-
+    /**
+     * @return 返回两个日期之间的所有日期
+     */
+    function getBetweenDateStr(start, end) {
+        let result = [];
+        if (start > end) {
+            let temp_date = '';
+            temp_date = end;
+            end = start;
+            start = temp_date;
+        }
+        let beginDay = start.split("-");
+        let endDay = end.split("-");
+        let diffDay = new Date();
+        let dateList = new Array;
+        let i = 0;
+        diffDay.setDate(beginDay[2]);
+        diffDay.setMonth(beginDay[1] - 1);
+        diffDay.setFullYear(beginDay[0]);
+        result.push(start);
+        while (i == 0) {
+            var countDay = diffDay.getTime() + 24 * 60 * 60 * 1000;
+            diffDay.setTime(countDay);
+            dateList[2] = diffDay.getDate();
+            dateList[1] = diffDay.getMonth() + 1;
+            dateList[0] = diffDay.getFullYear();
+            if (String(dateList[1]).length == 1) {
+                dateList[1] = "0" + dateList[1]
+            };
+            if (String(dateList[2]).length == 1) {
+                dateList[2] = "0" + dateList[2]
+            };
+            result.push(dateList[0] + "-" + dateList[1] + "-" + dateList[2]);
+            if (dateList[0] == endDay[0] && dateList[1] == endDay[1] && dateList[2] == endDay[2]) {
+                i = 1;
+            }
+        };
+        return result;
+    };
     //上下左右选中
     function selectDay(type, del) {
         var day = Number(fullYearPicker_nowSelect.split("-")[2]);
@@ -335,5 +435,51 @@
             }
         }
     }
+    //监听键盘上下左右  fullYearPicker_nowSelect
+
+    document.onkeydown = function (event) {
+        if (_viewer_.data('config').disabledDay !== "") {
+            return;
+        }
+        if (fullYearPicker_nowSelect === null) {
+            return
+        };
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        if (e && e.keyCode === 38 || e && e.keyCode === 37) { //上,左
+            //38=上键，37=左键
+            //alert(fullYearPicker_nowSelect)
+            //if(!e.ctrlKey){
+            if (e.keyCode === 38) { //up
+                selectDay(38, true);
+            } else if (e && e.keyCode === 37) {
+                selectDay(37, true);
+            }
+            // }else{
+            //     //组合键
+            //     if (e.keyCode === 38 && e.ctrlKey) {//up
+            //         selectDay(38,true);
+            //     } else if (e && e.keyCode === 37 && e.ctrlKey) {
+            //         selectDay(37,true);
+            //     }
+            // }
+        }
+        if (e && e.keyCode === 40 || e && e.keyCode === 39) { //下,右
+            //40=下键，39=右键
+            //if(!e.ctrlKey){
+            if (e.keyCode === 40) { //up
+                selectDay(40, true);
+            } else if (e && e.keyCode === 39) {
+                selectDay(39, true);
+            }
+            // }else{
+            //     //组合键
+            //     if (e.keyCode === 40 && e.ctrlKey) {//up
+            //         selectDay(40,true);
+            //     } else if (e && e.keyCode === 39 && e.ctrlKey) {
+            //         selectDay(39,true);
+            //     }
+            // }
+        }
+    };
 
 })($, window);
